@@ -2,6 +2,9 @@ name: Build macOS DMG
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - build/macos-dmg
 
 permissions:
   contents: write
