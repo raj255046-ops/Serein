@@ -354,8 +354,9 @@ fn run(
 		let frame = encoder.encode(rgb)?;
 		if !shared.stopped.load(Ordering::Acquire) {
 			on_frame(frame);
-			shared.active.store(true, Ordering::Release);
-			wake();
+			if !shared.active.swap(true, Ordering::AcqRel) {
+				wake();
+			}
 		}
 		Ok(())
 	};
@@ -727,8 +728,9 @@ mod macos {
 				break;
 			}
 			on_frame(frame);
-			shared.active.store(true, Ordering::Release);
-			wake();
+			if !shared.active.swap(true, Ordering::AcqRel) {
+				wake();
+			}
 		}
 		Ok(())
 	}
